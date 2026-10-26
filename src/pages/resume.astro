@@ -1,0 +1,40 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { site } from "@/data/site";
+---
+<BaseLayout title={`Resume — ${site.name} · ${site.title}`} description="Resume of Somtochukwu David Ogbonna — computational biologist and software engineer based in Toronto. Download PDF or read online.">
+  <section class="section">
+    <div class="container-content">
+      <div class="flex flex-wrap items-end justify-between gap-6">
+        <div><p class="eyebrow">Resume</p><h1 class="mt-3">Resume</h1></div>
+        <div class="flex flex-wrap gap-3">
+          <a href="/resume.pdf" download class="btn btn-primary">Download PDF ↓</a>
+          <a href="/resume.pdf" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">Open in new tab ↗</a>
+        </div>
+      </div>
+      <div class="mt-10 border border-rule rounded-md overflow-hidden bg-white">
+        <object data="/resume.pdf" type="application/pdf" class="w-full" style="height: 80vh; min-height: 600px;" aria-label="Embedded resume PDF">
+          <div class="p-8 text-center text-ink-soft"><p class="mb-4">The PDF viewer isn’t available in your browser. The HTML version is below and contains the same information.</p><a href="/resume.pdf" download class="btn btn-primary">Download PDF ↓</a></div>
+        </object>
+      </div>
+    </div>
+  </section>
+  <section class="section border-t border-rule">
+    <div class="container-prose prose-case">
+      <p class="eyebrow mb-2">HTML Version</p><h2 class="!text-3xl mb-1">{site.name}</h2>
+      <p class="text-ink-soft">{site.title} · {site.location}</p>
+      <p class="text-ink-soft text-sm mt-1">{site.email} · {site.workMode}</p>
+      <h3 class="!text-xl mt-10 mb-3">Summary</h3><p>{site.summary}</p>
+      <h3 class="!text-xl mt-10 mb-3">Experience</h3>
+      {site.experience.map((e) => (<div class="mb-5"><p class="font-semibold">{e.role}</p><p class="text-ink-soft text-sm">{e.org} · {e.location} · {e.dates}</p></div>))}
+      <h3 class="!text-xl mt-10 mb-3">Education</h3>
+      {site.education.map((e) => (<div class="mb-5"><p class="font-semibold">{e.degree}</p><p class="text-ink-soft text-sm">{e.institution} · {e.dates}</p><p class="text-sm mt-1">{e.detail}</p></div>))}
+      <h3 class="!text-xl mt-10 mb-3">Technical Skills</h3>
+      {site.skills.map((g) => (<p class="mb-2"><strong>{g.category}:</strong> {g.items.join(" · ")}</p>))}
+      <h3 class="!text-xl mt-10 mb-3">Languages</h3>
+      {site.languages.map((l) => (<p class="mb-1"><strong>{l.name}</strong> — {l.level}</p>))}
+      <h3 class="!text-xl mt-10 mb-3">Publications & Talks</h3>
+      <ul>{site.publications.map((p) => <li class="text-sm mb-2">{p}</li>)}</ul>
+    </div>
+  </section>
+</BaseLayout>

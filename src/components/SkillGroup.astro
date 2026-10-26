@@ -1,0 +1,8 @@
+---
+export interface Props { category: string; items: string[]; }
+const { category, items } = Astro.props;
+---
+<div>
+  <p class="eyebrow mb-3">{category}</p>
+  <p class="text-ink-soft leading-relaxed text-sm">{items.join(" · ")}</p>
+</div>

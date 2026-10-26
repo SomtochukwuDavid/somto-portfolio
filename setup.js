@@ -1,0 +1,778 @@
+const fs = require('fs');
+const path = require('path');
+
+const files = {
+  "package.json": `{
+  "name": "somto-ogbonna-portfolio",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/check": "^0.9.4",
+    "@fontsource/fraunces": "^5.0.19",
+    "@fontsource/inter": "^5.0.18",
+    "@fontsource/jetbrains-mono": "^5.0.20",
+    "astro": "^4.15.0"
+  },
+  "devDependencies": {
+    "@astrojs/tailwind": "^5.1.0",
+    "tailwindcss": "^3.4.10",
+    "typescript": "^5.5.4"
+  }
+}`,
+  "astro.config.mjs": `import { defineConfig } from "astro/config";
+import tailwind from "@astrojs/tailwind";
+
+export default defineConfig({
+  site: "https://somtoogbonna.com",
+  integrations: [tailwind({ applyBaseStyles: false })],
+  output: "static",
+  build: { inlineStylesheets: "auto" },
+});`,
+  "tailwind.config.js": `/** @type {import('tailwindcss').Config} */
+export default {
+  content: ["./src/**/*.{astro,html,js,jsx,md,mdx,ts,tsx}"],
+  theme: {
+    extend: {
+      colors: {
+        bg: "#FAFAF7",
+        ink: "#14181F",
+        accent: "#1F4A3F",
+        brass: "#B8935A",
+        rule: "#DDDBD3",
+        "ink-soft": "#4A5058",
+      },
+      fontFamily: {
+        serif: ['"Fraunces"', "Georgia", "serif"],
+        sans: ['"Inter"', "system-ui", "sans-serif"],
+        mono: ['"JetBrains Mono"', "ui-monospace", "monospace"],
+      },
+      fontSize: {
+        base: ["17px", { lineHeight: "1.65" }],
+      },
+      maxWidth: {
+        content: "1120px",
+        prose: "720px",
+      },
+      borderRadius: { sm: "4px", DEFAULT: "6px" },
+      boxShadow: { lift: "0 4px 14px rgba(20,24,31,0.06)" },
+    },
+  },
+  plugins: [],
+};`,
+  "tsconfig.json": `{
+  "extends": "astro/tsconfigs/strict",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    }
+  }
+}`,
+  "netlify.toml": `[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"`,
+  "public/favicon.svg": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" rx="10" fill="#14181F"/>
+  <text x="32" y="42" text-anchor="middle" font-family="Georgia, serif" font-size="30" font-weight="600" fill="#FAFAF7">SO</text>
+</svg>`,
+  "public/headshot.txt": "PLACEHOLDER: Replace this file with your headshot named 'headshot.jpg'. The site will automatically pick it up.",
+  "public/resume.txt": "PLACEHOLDER: Replace this file with your resume named 'resume.pdf'. The site will automatically pick it up.",
+  "src/data/site.ts": `export const site = {
+  name: "Somtochukwu David Ogbonna",
+  shortName: "Somto Ogbonna",
+  title: "Computational Biologist & Software Engineer",
+  location: "Toronto, Ontario, Canada",
+  workMode: "Remote-ready · Hybrid",
+  email: "tontbasin@gmail.com",
+  linkedin: null as string | null,     
+  github: "https://github.com/SomtochukwuDavid",
+  availability: "Available for full-time, contract, and project work",
+  replyWindow: "Replies within 1 business day",
+  headline: "Computational biology, engineered into reproducible software.",
+  oneLiner: "I turn sequencing and laboratory data into analysis-ready datasets — and I write the tested, versioned software that runs the pipelines.",
+  positioning: "I work at the seam between biology and computer science: genome alignment on one desk, a Python service on the other, and wet-lab scientists in the room.",
+  summary: "Computational biologist and software engineer with a master's in bioinformatics and a bachelor's in computer science with a biology minor, both from Canadian universities. I build pipelines that turn raw sequencing and laboratory data into analysis-ready datasets, and I write the software that runs them. I apply machine learning where the biology is too complex for a fixed rule, and I move fluidly between a genome alignment problem, a Python service, and a conversation with wet-lab scientists.",
+  metrics: [
+    { value: "~40%", label: "reduction in per-sample variant-calling runtime" },
+    { value: "3", label: "collaborating research groups on the reference-dataset API" },
+    { value: "100s", label: "of whole-exome & RNA-seq samples per year" },
+    { value: "~0", label: "analysis discrepancy across team members after reproducibility adoption" },
+  ],
+  skills: [
+    { category: "Programming", items: ["Python", "R", "SQL", "C++", "Bash / Shell"] },
+    { category: "Bioinformatics", items: ["GATK", "BWA", "samtools", "DESeq2", "edgeR", "Seurat", "Scanpy", "Nextflow", "Snakemake", "Bioconductor", "Biopython"] },
+    { category: "Data & ML", items: ["pandas", "NumPy", "scikit-learn", "PyTorch", "Statistical modelling", "Data visualization"] },
+  ],
+  experience: [
+    { role: "Research Software Developer", org: "University of Toronto Research Computing", location: "Toronto, Ontario", dates: "2022 – 2023" },
+    { role: "Bioinformatics Analyst", org: "Meridian Health Data", location: "Mississauga, Ontario", dates: "2022 – 2023" },
+    { role: "Teaching Assistant — Computational Biology", org: "Graduate Department of Biology, University of Toronto", location: "Toronto, Ontario", dates: "2020 – 2021" },
+  ],
+  education: [
+    { degree: "M.Sc. in Bioinformatics", institution: "University of Toronto", dates: "2021 – 2023", detail: "Thesis: \u201cMachine Learning Approaches to Variant Pathogenicity Prediction Using Sequence and Structural Features.\u201d Focus: genomics, statistical genetics, ML, HPC for biological data." },
+    { degree: "B.Sc. (Hons) in Computer Science", institution: "York University", dates: "2017 – 2021", detail: "Minor: Biology. Core: Data Structures & Algorithms, Operating Systems, Databases, Software Engineering, Machine Learning, Molecular Biology, Genetics." },
+    { degree: "Certificate in Data Science", institution: "Continuing Studies, Toronto", dates: "2022 – 2023", detail: "Statistical inference, predictive modelling, data engineering, reproducible research, applied ML workflows." },
+  ],
+  certifications: [{ name: "Certificate in Data Science", issuer: "Continuing Studies, Toronto", date: "2023" }],
+  languages: [{ name: "English", level: "Native / professional" }, { name: "Igbo", level: "Heritage" }, { name: "French", level: "Reading knowledge" }],
+  projects: [
+    { slug: "variant-pipeline", flagship: true, category: "Cancer Genomics · Pipeline Engineering", title: "Variant-Calling Pipeline for Cancer Genomics", problem: "A cancer genomics programme was processing hundreds of whole-exome and RNA-seq samples per year on an ad-hoc script collection, producing recurring manual reruns and analysis discrepancies between team members.", result: "Rewrote the workflow as a containerised Nextflow pipeline with automated quality gates — cutting per-sample runtime by ~40% and removing a class of manual reruns.", stack: ["Python", "Nextflow", "Docker", "GATK", "scikit-learn", "AWS"], role: "Solo — pipeline design, API, ML classifier, process adoption", duration: "2023 – present", team: "Solo, embedded with wet-lab and clinical collaborators" },
+    { slug: "biomarker-rnaseq", flagship: false, category: "RNA-seq · Biomarker Discovery", title: "Multi-Site Biomarker RNA-seq Workflow", problem: "A multi-site biomarker study needed reproducible RNA-seq quantification and differential expression reporting across sites, previously assembled by hand into slide decks each week.", result: "Built a quantification & DE workflow in R and Python with parameterised R Markdown reports — substantially reducing weekly reporting effort and improving traceability from raw sample to published figure.", stack: ["R", "Seurat", "DESeq2", "PostgreSQL", "Jupyter"], role: "Bioinformatics Analyst", duration: "2022 – 2023", team: "Analyst within a multi-site study team" },
+    { slug: "comparative-genomics", flagship: false, category: "Open Source · Comparative Genomics", title: "Open-Source Comparative Genomics Toolkit", problem: "An open-source toolkit for comparative genomics needed an alignment parser and distance-calculation module, with large-genome runs exceeding available memory.", result: "Implemented modules in Python and C++, profiled and optimised core routines to reduce memory footprint, and raised test coverage with CI on actively developed components.", stack: ["Python", "C++", "Git", "CI/CD", "Linux"], role: "Research Software Developer", duration: "2022 – 2023", team: "Contributor to an open-source toolkit" },
+  ],
+  publications: [
+    "S. D. Ogbonna, \u201cMachine Learning Approaches to Variant Pathogenicity Prediction Using Sequence and Structural Features,\u201d M.Sc. thesis, University of Toronto, 2023.",
+    "S. D. Ogbonna and R. A. Whitfield, \u201cFeature Engineering Strategies for Rare Variant Classification in Exome Cohorts,\u201d Canadian Bioinformatics Workshop, 2022.",
+    "Contributor, open-source comparative genomics toolkit — alignment parsing and distance calculation modules, public repository, 2021–2022.",
+    "S. D. Ogbonna, \u201cReproducible Pipelines for Small Research Groups,\u201d internal seminar, Genome Systems Lab, 2024.",
+  ],
+};`,
+  "src/styles/global.css": `@import "@fontsource/fraunces/400.css";
+@import "@fontsource/fraunces/600.css";
+@import "@fontsource/fraunces/700.css";
+@import "@fontsource/inter/400.css";
+@import "@fontsource/inter/500.css";
+@import "@fontsource/inter/600.css";
+@import "@fontsource/jetbrains-mono/400.css";
+@import "@fontsource/jetbrains-mono/500.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html { background-color: #FAFAF7; color: #14181F; scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+  body { font-family: "Inter", system-ui, sans-serif; font-size: 17px; line-height: 1.65; font-weight: 400; }
+  h1, h2, h3, h4 { font-family: "Fraunces", Georgia, serif; letter-spacing: -0.015em; color: #14181F; }
+  h1 { font-size: clamp(2.25rem, 5vw, 3.75rem); line-height: 1.08; font-weight: 600; }
+  h2 { font-size: clamp(1.75rem, 3vw, 2.25rem); line-height: 1.15; font-weight: 600; }
+  h3 { font-size: 1.375rem; line-height: 1.3; font-weight: 600; }
+  a { color: inherit; }
+  ::selection { background: #1F4A3F; color: #FAFAF7; }
+  :focus-visible { outline: 2px solid #1F4A3F; outline-offset: 2px; border-radius: 2px; }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; } }
+}
+
+@layer components {
+  .container-content { max-width: 1120px; margin: 0 auto; padding-left: 24px; padding-right: 24px; }
+  .container-prose { max-width: 720px; margin: 0 auto; padding-left: 24px; padding-right: 24px; }
+  .section { padding-top: 96px; padding-bottom: 96px; }
+  @media (max-width: 768px) { .section { padding-top: 56px; padding-bottom: 56px; } }
+  .eyebrow { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase; color: #4A5058; }
+  .rule { border-top: 1px solid #DDDBD3; }
+  .btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.85rem 1.25rem; border-radius: 6px; font-family: "Inter", sans-serif; font-weight: 500; font-size: 0.95rem; transition: all 150ms ease-out; text-decoration: none; line-height: 1; }
+  .btn-primary { background: #1F4A3F; color: #FAFAF7; }
+  .btn-primary:hover { background: #163830; transform: translateY(-1px); }
+  .btn-secondary { background: transparent; color: #14181F; border: 1px solid #14181F; }
+  .btn-secondary:hover { background: #14181F; color: #FAFAF7; }
+  .status-pill { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.4rem 0.75rem; border: 1px solid #DDDBD3; border-radius: 999px; font-family: "JetBrains Mono", monospace; font-size: 0.72rem; letter-spacing: 0.08em; color: #4A5058; }
+  .status-pill::before { content: ""; width: 7px; height: 7px; border-radius: 999px; background: #1F4A3F; display: inline-block; }
+  .tag { display: inline-block; padding: 0.28rem 0.6rem; border: 1px solid #DDDBD3; border-radius: 4px; font-family: "JetBrains Mono", monospace; font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; color: #4A5058; }
+  .card { border: 1px solid #DDDBD3; border-radius: 6px; background: #FFFFFF; transition: box-shadow 150ms ease-out, transform 150ms ease-out, border-color 150ms ease-out; }
+  .card:hover { box-shadow: 0 4px 14px rgba(20,24,31,0.06); border-color: #C9C6BA; transform: translateY(-2px); }
+  .pullquote { font-family: "Fraunces", Georgia, serif; font-size: clamp(1.375rem, 2.4vw, 1.75rem); line-height: 1.4; font-weight: 400; font-style: italic; color: #14181F; }
+  .hr-soft { border: 0; border-top: 1px solid #DDDBD3; margin: 0; }
+  .prose-case p { margin-bottom: 1.1rem; }
+  .prose-case ul { list-style: none; padding-left: 0; }
+  .prose-case ul li { position: relative; padding-left: 1.5rem; margin-bottom: 0.65rem; }
+  .prose-case ul li::before { content: "—"; position: absolute; left: 0; color: #B8935A; font-family: "JetBrains Mono", monospace; }
+  .prose-case strong { color: #1F4A3F; font-weight: 600; }
+}`,
+  "src/layouts/BaseLayout.astro": `---
+import "@/styles/global.css";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import { site } from "@/data/site";
+
+export interface Props {
+  title: string;
+  description: string;
+  canonical?: string;
+  ogType?: "website" | "article" | "profile";
+  noindex?: boolean;
+}
+
+const { title, description, canonical, ogType = "website", noindex = false } = Astro.props;
+const siteUrl = Astro.site?.toString().replace(/\\/$/, "") ?? "https://somtoogbonna.com";
+const canonicalUrl = canonical ?? new URL(Astro.url.pathname, siteUrl).toString();
+
+const personSchema = {
+  "@context": "https://schema.org", "@type": "Person", name: site.name, jobTitle: site.title,
+  email: \`mailto:\${site.email}\`,
+  address: { "@type": "PostalAddress", addressLocality: "Toronto", addressRegion: "Ontario", addressCountry: "CA" },
+  alumniOf: [{ "@type": "CollegeOrUniversity", name: "University of Toronto" }, { "@type": "CollegeOrUniversity", name: "York University" }],
+  sameAs: [site.github].filter(Boolean),
+  knowsAbout: ["Bioinformatics", "Computational Biology", "Machine Learning", "Software Engineering", "Genomics"],
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="theme-color" content="#FAFAF7" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    <meta property="og:type" content={ogType} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:image" content={\`\${siteUrl}/og-image.png\`} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={\`\${siteUrl}/og-image.png\`} />
+    {Astro.url.pathname === "/" && (
+      <script type="application/ld+json" set:html={JSON.stringify(personSchema)} />
+    )}
+  </head>
+  <body class="bg-bg text-ink antialiased">
+    <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:bg-ink focus:text-bg focus:px-4 focus:py-2 focus:rounded">Skip to content</a>
+    <Header />
+    <main id="main" class="min-h-[60vh]"><slot /></main>
+    <Footer />
+    <script is:inline>
+      const btn = document.getElementById("menu-toggle");
+      const menu = document.getElementById("mobile-menu");
+      if (btn && menu) {
+        btn.addEventListener("click", () => {
+          const open = btn.getAttribute("aria-expanded") === "true";
+          btn.setAttribute("aria-expanded", String(!open));
+          menu.classList.toggle("hidden", open);
+        });
+      }
+    </script>
+  </body>
+</html>`,
+  "src/components/Header.astro": `---
+const nav = [{ href: "/", label: "Home" }, { href: "/work", label: "Work" }, { href: "/about", label: "About" }, { href: "/resume", label: "Resume" }, { href: "/contact", label: "Contact" }];
+const current = Astro.url.pathname;
+const isActive = (href: string) => href === "/" ? current === "/" : current.startsWith(href);
+---
+<header class="sticky top-0 z-40 bg-bg/85 backdrop-blur border-b border-rule">
+  <div class="container-content flex items-center justify-between h-16">
+    <a href="/" class="flex items-center gap-2 group" aria-label="Home">
+      <span class="font-serif text-lg font-semibold tracking-tight">SO</span>
+      <span class="hidden sm:block font-mono text-[0.7rem] uppercase tracking-[0.14em] text-ink-soft group-hover:text-accent transition-colors">Somtochukwu David Ogbonna</span>
+    </a>
+    <nav class="hidden md:flex items-center gap-7" aria-label="Primary">
+      {nav.map(({ href, label }) => (
+        <a href={href} class:list={["text-sm transition-colors", isActive(href) ? "text-accent font-medium" : "text-ink-soft hover:text-ink"]} aria-current={isActive(href) ? "page" : undefined}>{label}</a>
+      ))}
+    </nav>
+    <a href="/contact" class="hidden md:inline-flex btn btn-primary text-sm">Get in Touch</a>
+    <button id="menu-toggle" type="button" class="md:hidden inline-flex items-center justify-center w-10 h-10 border border-rule rounded" aria-controls="mobile-menu" aria-expanded="false" aria-label="Toggle navigation">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round" /></svg>
+    </button>
+  </div>
+  <div id="mobile-menu" class="hidden md:hidden border-t border-rule bg-bg">
+    <nav class="container-content py-4 flex flex-col gap-1" aria-label="Mobile">
+      {nav.map(({ href, label }) => (
+        <a href={href} class:list={["block py-2 text-base border-b border-rule last:border-b-0", isActive(href) ? "text-accent font-medium" : "text-ink-soft"]}>{label}</a>
+      ))}
+      <a href="/contact" class="btn btn-primary mt-3 justify-center">Get in Touch</a>
+    </nav>
+  </div>
+</header>`,
+  "src/components/Footer.astro": `---
+import { site } from "@/data/site";
+const year = new Date().getFullYear();
+---
+<footer class="border-t border-rule mt-24">
+  <div class="container-content py-12 grid gap-10 md:grid-cols-3">
+    <div>
+      <p class="font-serif text-xl font-semibold tracking-tight">{site.name}</p>
+      <p class="text-sm text-ink-soft mt-1">{site.title}</p>
+      <p class="eyebrow mt-4">{site.location}</p>
+    </div>
+    <div class="md:col-span-2 grid grid-cols-2 gap-8">
+      <div>
+        <p class="eyebrow mb-3">Contact</p>
+        <a class="block text-sm hover:text-accent transition-colors" href={\`mailto:\${site.email}\`}>{site.email}</a>
+        <p class="text-sm text-ink-soft mt-1">{site.replyWindow}</p>
+      </div>
+      <div>
+        <p class="eyebrow mb-3">Elsewhere</p>
+        {site.linkedin ? <a class="block text-sm hover:text-accent transition-colors" href={site.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn ↗</a> : <p class="text-sm text-ink-soft">LinkedIn — <em>none provided</em></p>}
+        {site.github ? <a class="block text-sm hover:text-accent transition-colors mt-1" href={site.github} target="_blank" rel="noopener noreferrer">GitHub ↗</a> : <p class="text-sm text-ink-soft mt-1">GitHub — <em>none provided</em></p>}
+      </div>
+    </div>
+  </div>
+  <div class="border-t border-rule">
+    <div class="container-content py-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+      <p class="font-mono text-[0.7rem] uppercase tracking-[0.14em] text-ink-soft">© {year} {site.name} · Built with Astro & Tailwind</p>
+      <p class="font-mono text-[0.7rem] uppercase tracking-[0.14em] text-ink-soft">{site.workMode}</p>
+    </div>
+  </div>
+</footer>`,
+  "src/components/Hero.astro": `---
+import { site } from "@/data/site";
+---
+<section class="section">
+  <div class="container-content grid gap-12 lg:grid-cols-[1.5fr_1fr] lg:items-center">
+    <div>
+      <p class="eyebrow">{site.location} · {site.workMode}</p>
+      <h1 class="mt-5">{site.name}</h1>
+      <p class="font-serif text-2xl md:text-[1.65rem] text-ink-soft mt-3 font-normal">{site.title}</p>
+      <p class="mt-6 max-w-xl text-ink-soft leading-relaxed">{site.oneLiner}</p>
+      <div class="mt-8 flex flex-wrap gap-3">
+        <a href="/work" class="btn btn-primary">View Work →</a>
+        <a href="/resume" class="btn btn-secondary">Download Resume ↓</a>
+      </div>
+      <div class="mt-8"><span class="status-pill">{site.availability} · {site.replyWindow}</span></div>
+    </div>
+    <div class="relative">
+      <div class="aspect-square max-w-sm w-full mx-auto lg:mx-0 lg:ml-auto rounded-md border border-rule bg-white overflow-hidden relative">
+        <img src="/headshot.jpg" alt="Portrait of Somtochukwu David Ogbonna" width="600" height="600" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+        <div class="hidden absolute inset-0 items-center justify-center bg-[#14181F] text-bg" aria-hidden="true"><span class="font-serif font-semibold text-[7rem] leading-none tracking-tighter">SO</span></div>
+      </div>
+      <p class="font-mono text-[0.65rem] uppercase tracking-[0.14em] text-ink-soft text-center mt-3">Toronto, ON · Open to remote</p>
+    </div>
+  </div>
+</section>`,
+  "src/components/Metric.astro": `---
+export interface Props { value: string; label: string; }
+const { value, label } = Astro.props;
+---
+<div>
+  <p class="font-serif text-4xl md:text-5xl font-semibold text-accent leading-none tracking-tight">{value}</p>
+  <p class="mt-3 text-sm text-ink-soft leading-snug max-w-[16rem]">{label}</p>
+</div>`,
+  "src/components/CaseCard.astro": `---
+export interface Props { slug: string; title: string; category: string; problem: string; result: string; stack: string[]; flagship?: boolean; }
+const { slug, title, category, problem, result, stack, flagship = false } = Astro.props;
+---
+<a href={\`/work/\${slug}\`} class:list={["card block p-6 md:p-8 group", flagship && "md:p-10"]}>
+  <div class="flex items-start justify-between gap-4 flex-wrap">
+    <p class="eyebrow">{category}</p>
+    {flagship && <span class="tag !border-accent !text-accent">Flagship</span>}
+  </div>
+  <h3 class:list={["mt-4 font-serif font-semibold tracking-tight", flagship ? "text-3xl md:text-4xl" : "text-2xl"]}>{title}</h3>
+  <div class:list={["mt-4 grid gap-4", flagship ? "md:grid-cols-2" : ""]}>
+    <div>
+      <p class="font-mono text-[0.65rem] uppercase tracking-[0.14em] text-ink-soft mb-1">Problem</p>
+      <p class="text-ink-soft text-sm leading-relaxed">{problem}</p>
+    </div>
+    <div>
+      <p class="font-mono text-[0.65rem] uppercase tracking-[0.14em] text-ink-soft mb-1">Result</p>
+      <p class:list={["leading-relaxed", flagship ? "text-base text-ink" : "text-sm text-ink-soft"]}>{result}</p>
+    </div>
+  </div>
+  <div class="mt-5 flex flex-wrap gap-2">{stack.map((t) => <span class="tag">{t}</span>)}</div>
+  <p class="mt-6 font-mono text-[0.72rem] uppercase tracking-[0.14em] text-accent group-hover:underline">Read case study →</p>
+</a>`,
+  "src/components/SkillGroup.astro": `---
+export interface Props { category: string; items: string[]; }
+const { category, items } = Astro.props;
+---
+<div>
+  <p class="eyebrow mb-3">{category}</p>
+  <p class="text-ink-soft leading-relaxed text-sm">{items.join(" · ")}</p>
+</div>`,
+  "src/components/Tag.astro": `---
+export interface Props { label: string; }
+const { label } = Astro.props;
+---
+<span class="tag">{label}</span>`,
+  "src/components/CtaBand.astro": `---
+export interface Props { heading: string; buttonLabel?: string; buttonHref?: string; }
+const { heading, buttonLabel = "Get in Touch →", buttonHref = "/contact" } = Astro.props;
+---
+<section class="bg-accent text-bg">
+  <div class="container-content py-20 md:py-24 text-center">
+    <h2 class="!text-bg max-w-2xl mx-auto">{heading}</h2>
+    <a href={buttonHref} class="mt-8 inline-flex btn bg-bg !text-accent hover:!bg-white">{buttonLabel}</a>
+  </div>
+</section>`,
+  "src/pages/index.astro": `---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Hero from "@/components/Hero.astro";
+import Metric from "@/components/Metric.astro";
+import CaseCard from "@/components/CaseCard.astro";
+import SkillGroup from "@/components/SkillGroup.astro";
+import CtaBand from "@/components/CtaBand.astro";
+import { site } from "@/data/site";
+const featured = site.projects.slice(0, 3);
+---
+<BaseLayout title={\`\${site.name} — \${site.title}\`} description="Computational biologist and software engineer in Toronto. I build reproducible pipelines that turn sequencing and laboratory data into analysis-ready datasets, and I write the software that runs them." ogType="profile">
+  <Hero />
+  <section class="border-y border-rule bg-white">
+    <div class="container-content py-12">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-6">{site.metrics.map((m) => <Metric value={m.value} label={m.label} />)}</div>
+    </div>
+  </section>
+  <section class="section">
+    <div class="container-prose text-center"><p class="pullquote">“{site.positioning}”</p></div>
+  </section>
+  <section class="section border-t border-rule">
+    <div class="container-content">
+      <div class="flex items-end justify-between flex-wrap gap-4 mb-10">
+        <div><p class="eyebrow">Featured Work</p><h2 class="mt-2">Three case studies</h2></div>
+        <a href="/work" class="font-mono text-[0.72rem] uppercase tracking-[0.14em] text-accent hover:underline">View all work →</a>
+      </div>
+      <div class="grid gap-5">{featured.map((p) => <CaseCard slug={p.slug} title={p.title} category={p.category} problem={p.problem} result={p.result} stack={p.stack} flagship={p.flagship} />)}</div>
+    </div>
+  </section>
+  <section class="section border-t border-rule">
+    <div class="container-content">
+      <p class="eyebrow">Skills</p><h2 class="mt-2 mb-10">What I work with</h2>
+      <div class="grid gap-10 md:grid-cols-3">{site.skills.map((g) => <SkillGroup category={g.category} items={g.items} />)}</div>
+    </div>
+  </section>
+  <section class="section border-t border-rule">
+    <div class="container-prose text-center"><p class="eyebrow mb-3">Recommendations</p><p class="text-ink-soft">Recommendations available on request.</p></div>
+  </section>
+  <CtaBand heading="Have a research problem that needs reproducible software?" />
+</BaseLayout>`,
+  "src/pages/work/index.astro": `---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import CaseCard from "@/components/CaseCard.astro";
+import CtaBand from "@/components/CtaBand.astro";
+import { site } from "@/data/site";
+const [flagship, ...rest] = site.projects;
+---
+<BaseLayout title={\`Selected Work — \${site.name} · \${site.title}\`} description="Three case studies in bioinformatics pipeline engineering, multi-site biomarker analysis, and open-source scientific software.">
+  <section class="section">
+    <div class="container-content">
+      <p class="eyebrow">Work</p><h1 class="mt-3">Selected Work</h1>
+      <p class="mt-5 max-w-2xl text-ink-soft leading-relaxed">A small set of projects that show how I move from a wet-lab problem through a pipeline, a piece of software, and a result that collaborators can trust and reuse.</p>
+      <div class="mt-12 grid gap-6">
+        <CaseCard slug={flagship.slug} title={flagship.title} category={flagship.category} problem={flagship.problem} result={flagship.result} stack={flagship.stack} flagship />
+        {rest.map((p) => <CaseCard slug={p.slug} title={p.title} category={p.category} problem={p.problem} result={p.result} stack={p.stack} />)}
+      </div>
+    </div>
+  </section>
+  <CtaBand heading="Have a similar problem in mind?" />
+</BaseLayout>`,
+  "src/pages/work/variant-pipeline.astro": `---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Tag from "@/components/Tag.astro";
+import { site } from "@/data/site";
+const p = site.projects[0]; const next = site.projects[1];
+---
+<BaseLayout title={\`\${p.title} — Case Study · \${site.name}\`} description="Rewriting a cancer genomics variant-calling workflow as a containerised Nextflow pipeline with automated quality gates — ~40% faster per-sample runtime and reproducible results across the team." ogType="article">
+  <article class="section">
+    <div class="container-content">
+      <p class="font-mono text-[0.72rem] uppercase tracking-[0.14em] text-ink-soft"><a href="/work" class="hover:text-accent">Work</a><span class="mx-2 opacity-60">/</span><span>Variant-Calling Pipeline</span></p>
+      <p class="eyebrow mt-8">{p.category}</p><h1 class="mt-3 max-w-3xl">{p.title}</h1>
+      <p class="mt-6 max-w-2xl text-xl text-ink-soft leading-relaxed">A cancer genomics research programme processing several hundred whole-exome and RNA-seq samples per year moved from ad-hoc scripts to a containerised, quality-gated Nextflow pipeline — cutting per-sample runtime by ~40% and eliminating a recurring class of manual reruns.</p>
+      <div class="mt-8 grid grid-cols-2 md:grid-cols-4 gap-6 py-6 border-y border-rule">
+        <div><p class="font-mono text-[0.65rem] uppercase tracking-[0.14em] text-ink-soft">Role</p><p class="mt-1 text-sm">{p.role}</p></div>
+        <div><p class="font-mono text-[0.65rem] uppercase tracking-[0.14em] text-ink-soft">Duration</p><p class="mt-1 text-sm">{p.duration}</p></div>
+        <div><p class="font-mono text-[0.65rem] uppercase tracking-[0.14em] text-ink-soft">Team</p><p class="mt-1 text-sm">{p.team}</p></div>
+        <div><p class="font-mono text-[0.65rem] uppercase tracking-[0.14em] text-ink-soft">Stack</p><p class="mt-1 text-sm">{p.stack.join(" · ")}</p></div>
+      </div>
+    </div>
+  </article>
+  <article class="container-prose pb-16 prose-case">
+    <h2 class="text-2xl mb-4 mt-4">The problem</h2><p>A cancer genomics research programme was handling several hundred whole-exome and RNA-seq samples per year from raw reads to annotated variant calls. The analysis lived across ad-hoc scripts that individual researchers ran locally, so per-sample runtime was inconsistent, a recurring class of failures required manual reruns, and two team members running the same sample could end up with subtly different outputs.</p>
+    <h2 class="text-2xl mb-4 mt-10">My role</h2><p>Solo engineer on the pipeline and its supporting software — design, implementation, the ML variant classifier, and the process changes needed to make the new workflow stick across the team. Worked directly with wet-lab and clinical collaborators to keep analysis aligned with experimental design.</p>
+    <h2 class="text-2xl mb-4 mt-10">The approach</h2>
+    <ul>
+      <li>Rewrote the variant-calling workflow as a <strong>containerised Nextflow pipeline</strong> so runs are reproducible on any machine with Docker.</li>
+      <li>Added <strong>automated quality gates</strong> at each stage to catch failures before they propagate to downstream analysis, removing a recurring class of manual reruns.</li>
+      <li>Built a <strong>Python service</strong> exposing the lab's reference datasets and analysis results through a documented API — now used by three collaborating research groups.</li>
+      <li>Developed a <strong>scikit-learn classifier</strong> for likely-pathogenic vs. benign variants, combining sequence features, population frequency, and predicted structural impact, validated against a held-out clinical set.</li>
+      <li>Introduced <strong>version control, automated tests, and reproducible environment management</strong> where ad-hoc scripts previously lived, reducing cross-team discrepancies to near zero.</li>
+      <li>Held <strong>regular working sessions with wet-lab and clinical collaborators</strong> to keep analysis aligned with experimental design.</li>
+    </ul>
+    <h2 class="text-2xl mb-4 mt-10">The result</h2>
+    <ul>
+      <li><strong>~40% faster</strong> per-sample runtime after containerisation and pipeline restructuring.</li>
+      <li><strong>Hundreds</strong> of whole-exome and RNA-seq samples now processed per year on a single maintained workflow.</li>
+      <li><strong>3 collaborating research groups</strong> using the reference-dataset API in production.</li>
+      <li><strong>Near-zero</strong> analysis discrepancies between team members after reproducibility adoption.</li>
+      <li><strong>Recurring manual reruns</strong> eliminated via automated quality gates.</li>
+    </ul>
+    <h2 class="text-2xl mb-4 mt-10">Tech stack</h2><div class="flex flex-wrap gap-2 mb-4">{p.stack.map((t) => <Tag label={t} />)}</div>
+    <h2 class="text-2xl mb-4 mt-10">Example (illustrative)</h2>
+    <p class="text-sm text-ink-soft italic">Illustrative pipeline structure — not lifted from a real repository. Shows the containerised Nextflow pattern used in production.</p>
+    <pre class="mt-4 p-5 rounded-md bg-[#14181F] text-bg text-[0.8rem] leading-relaxed overflow-x-auto font-mono"><span class="text-[#B8935A]">// nextflow.config — a containerised variant-calling pipeline</span>
+process {
+  container = <span class="text-[#9DC9A5]">'quay.io/biocontainers/gatk4:4.4.0--py39h5371cbf_0'</span>
+  cpus      = 4
+  memory    = <span class="text-[#9DC9A5]">'16 GB'</span>
+}
+workflow {
+  reads    = Channel.fromFilePairs(<span class="text-[#9DC9A5]">'samples/*_{1,2}.fq.gz'</span>)
+  aligned  = bwa_mem(reads, ref) | mark_duplicates
+  called   = haplotypecaller(aligned, ref) | filter_variants
+  scored   = pathogenicity_classifier(called)
+  scored.view { v -> <span class="text-[#9DC9A5]">"\${v.sample}: \${v.classification}"</span> }
+}</pre>
+  </article>
+  <nav class="border-t border-rule">
+    <div class="container-content py-8 flex flex-wrap items-center justify-between gap-4">
+      <a href="/work" class="font-mono text-[0.72rem] uppercase tracking-[0.14em] text-ink-soft hover:text-accent">← Back to Work</a>
+      <a href={\`/work/\${next.slug}\`} class="text-right group"><p class="font-mono text-[0.65rem] uppercase tracking-[0.14em] text-ink-soft">Next case study</p><p class="font-serif text-lg mt-1 group-hover:text-accent transition-colors">{next.title} →</p></a>
+    </div>
+  </nav>
+</BaseLayout>`,
+  "src/pages/work/biomarker-rnaseq.astro": `---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Tag from "@/components/Tag.astro";
+import { site } from "@/data/site";
+const p = site.projects[1]; const next = site.projects[2];
+---
+<BaseLayout title={\`\${p.title} — Case Study · \${site.name}\`} description="Multi-site RNA-seq biomarker workflow in R and Python: reproducible quantification, differential expression, and parameterised reports replacing manual slide decks." ogType="article">
+  <article class="section">
+    <div class="container-content">
+      <p class="font-mono text-[0.72rem] uppercase tracking-[0.14em] text-ink-soft"><a href="/work" class="hover:text-accent">Work</a><span class="mx-2 opacity-60">/</span><span>Biomarker RNA-seq</span></p>
+      <p class="eyebrow mt-8">{p.category}</p><h1 class="mt-3 max-w-3xl">{p.title}</h1>
+      <p class="mt-6 max-w-2xl text-xl text-ink-soft leading-relaxed">A multi-site biomarker study needed reproducible RNA-seq quantification, differential expression, and weekly reporting — previously stitched together by hand. Built a workflow in R and Python with parameterised reports, improving traceability from raw sample to published figure.</p>
+      <div class="mt-8 grid grid-cols-2 md:grid-cols-4 gap-6 py-6 border-y border-rule">
+        <div><p class="font-mono text-[0.65rem] uppercase tracking-[0.14em] text-ink-soft">Role</p><p class="mt-1 text-sm">{p.role}</p></div>
+        <div><p class="font-mono text-[0.65rem] uppercase tracking-[0.14em] text-ink-soft">Duration</p><p class="mt-1 text-sm">{p.duration}</p></div>
+        <div><p class="font-mono text-[0.65rem] uppercase tracking-[0.14em] text-ink-soft">Team</p><p class="mt-1 text-sm">{p.team}</p></div>
+        <div><p class="font-mono text-[0.65rem] uppercase tracking-[0.14em] text-ink-soft">Stack</p><p class="mt-1 text-sm">{p.stack.join(" · ")}</p></div>
+      </div>
+    </div>
+  </article>
+  <article class="container-prose pb-16 prose-case">
+    <h2 class="text-2xl mb-4">The problem</h2><p>A multi-site biomarker study was processing RNA-seq data across sites and assembling weekly findings into slide decks by hand. Quantification and differential expression lacked a single maintained workflow, and tracing a published figure back to a raw sample was time-consuming.</p>
+    <h2 class="text-2xl mb-4 mt-10">My role</h2><p>Bioinformatics analyst within the study team — built the quantification and differential expression workflow, the reporting templates, the single-cell clustering workflow, and the study database schema.</p>
+    <h2 class="text-2xl mb-4 mt-10">The approach</h2>
+    <ul>
+      <li>Built the <strong>RNA-seq quantification and differential expression workflow</strong> in R and Python across sites.</li>
+      <li>Developed <strong>reproducible R Markdown reporting templates</strong> that replaced manually assembled slide decks, cutting weekly reporting effort substantially.</li>
+      <li>Built a <strong>single-cell analysis workflow</strong> for clustering and cell-type annotation across several thousand cells, including batch correction and marker validation.</li>
+      <li>Designed the <strong>study database schema and data dictionary</strong>, improving traceability from raw sample to published figure.</li>
+      <li>Presented results to clinical and non-technical stakeholders, translating statistical output into plain-language findings.</li>
+    </ul>
+    <h2 class="text-2xl mb-4 mt-10">The result</h2>
+    <ul>
+      <li><strong>Weekly reporting effort substantially reduced</strong> by replacing manual slide assembly with parameterised reports.</li>
+      <li><strong>Several thousand cells</strong> processed through a single-cell clustering and annotation workflow with batch correction.</li>
+      <li><strong>Full traceability</strong> from raw sample to published figure via the new schema and data dictionary.</li>
+      <li><strong>Consistent reporting</strong> across sites, replacing site-local slide-deck practices.</li>
+    </ul>
+    <h2 class="text-2xl mb-4 mt-10">Tech stack</h2><div class="flex flex-wrap gap-2 mb-4">{p.stack.map((t) => <Tag label={t} />)}</div>
+  </article>
+  <nav class="border-t border-rule">
+    <div class="container-content py-8 flex flex-wrap items-center justify-between gap-4">
+      <a href="/work" class="font-mono text-[0.72rem] uppercase tracking-[0.14em] text-ink-soft hover:text-accent">← Back to Work</a>
+      <a href={\`/work/\${next.slug}\`} class="text-right group"><p class="font-mono text-[0.65rem] uppercase tracking-[0.14em] text-ink-soft">Next case study</p><p class="font-serif text-lg mt-1 group-hover:text-accent transition-colors">{next.title} →</p></a>
+    </div>
+  </nav>
+</BaseLayout>`,
+  "src/pages/work/comparative-genomics.astro": `---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Tag from "@/components/Tag.astro";
+import { site } from "@/data/site";
+const p = site.projects[2]; const prev = site.projects[0];
+---
+<BaseLayout title={\`\${p.title} — Case Study · \${site.name}\`} description="Open-source comparative genomics toolkit: alignment parsing and distance calculation in Python and C++, memory optimisation, tests and CI on actively developed components." ogType="article">
+  <article class="section">
+    <div class="container-content">
+      <p class="font-mono text-[0.72rem] uppercase tracking-[0.14em] text-ink-soft"><a href="/work" class="hover:text-accent">Work</a><span class="mx-2 opacity-60">/</span><span>Comparative Genomics</span></p>
+      <p class="eyebrow mt-8">{p.category}</p><h1 class="mt-3 max-w-3xl">{p.title}</h1>
+      <p class="mt-6 max-w-2xl text-xl text-ink-soft leading-relaxed">An open-source comparative genomics toolkit needed an alignment parser and distance-calculation module — and its large-genome runs were exceeding available memory. Implemented in Python and C++, profiled and optimised core routines, and raised test coverage with CI on the components under active development.</p>
+      <div class="mt-8 grid grid-cols-2 md:grid-cols-4 gap-6 py-6 border-y border-rule">
+        <div><p class="font-mono text-[0.65rem] uppercase tracking-[0.14em] text-ink-soft">Role</p><p class="mt-1 text-sm">{p.role}</p></div>
+        <div><p class="font-mono text-[0.65rem] uppercase tracking-[0.14em] text-ink-soft">Duration</p><p class="mt-1 text-sm">{p.duration}</p></div>
+        <div><p class="font-mono text-[0.65rem] uppercase tracking-[0.14em] text-ink-soft">Team</p><p class="mt-1 text-sm">{p.team}</p></div>
+        <div><p class="font-mono text-[0.65rem] uppercase tracking-[0.14em] text-ink-soft">Stack</p><p class="mt-1 text-sm">{p.stack.join(" · ")}</p></div>
+      </div>
+    </div>
+  </article>
+  <article class="container-prose pb-16 prose-case">
+    <h2 class="text-2xl mb-4">The problem</h2><p>An open-source toolkit for comparative genomics was missing an alignment parser and a distance-calculation module, and its large-genome comparison runs exceeded available memory on typical research hardware.</p>
+    <h2 class="text-2xl mb-4 mt-10">My role</h2><p>Research software developer contributing to an open-source toolkit — responsible for alignment parsing and distance calculation modules in Python and C++, plus profiling, testing, and documentation.</p>
+    <h2 class="text-2xl mb-4 mt-10">The approach</h2>
+    <ul>
+      <li>Implemented <strong>alignment parsing and distance-calculation modules</strong> in Python and C++.</li>
+      <li>Profiled and optimised <strong>core routines</strong> to reduce memory footprint on large genome comparisons.</li>
+      <li>Enabled runs that previously <strong>exceeded available resources</strong> to complete on standard hardware.</li>
+      <li>Wrote <strong>unit and integration tests</strong> for the parsing layer and set up continuous integration.</li>
+      <li>Authored <strong>installation and usage documentation</strong> adopted by external research groups.</li>
+    </ul>
+    <h2 class="text-2xl mb-4 mt-10">The result</h2>
+    <ul>
+      <li><strong>Reduced memory footprint</strong> on large genome comparisons.</li>
+      <li><strong>Runs now complete</strong> that previously exceeded available resources.</li>
+      <li><strong>Raised test coverage</strong> on actively developed components via CI.</li>
+      <li><strong>External adoption</strong> of the toolkit's documentation by outside research groups.</li>
+    </ul>
+    <h2 class="text-2xl mb-4 mt-10">Tech stack</h2><div class="flex flex-wrap gap-2 mb-4">{p.stack.map((t) => <Tag label={t} />)}</div>
+  </article>
+  <nav class="border-t border-rule">
+    <div class="container-content py-8 flex flex-wrap items-center justify-between gap-4">
+      <a href="/work" class="font-mono text-[0.72rem] uppercase tracking-[0.14em] text-ink-soft hover:text-accent">← Back to Work</a>
+      <a href={\`/work/\${prev.slug}\`} class="text-right group"><p class="font-mono text-[0.65rem] uppercase tracking-[0.14em] text-ink-soft">Flagship case study</p><p class="font-serif text-lg mt-1 group-hover:text-accent transition-colors">{prev.title} →</p></a>
+    </div>
+  </nav>
+</BaseLayout>`,
+  "src/pages/about.astro": `---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import CtaBand from "@/components/CtaBand.astro";
+import { site } from "@/data/site";
+const arc = [
+  { date: "2017 – 2021", title: "Computer science, with a biology minor", body: "B.Sc. (Hons) at York University. Data structures and algorithms alongside molecular biology and genetics — the pairing that decided the direction of everything after." },
+  { date: "2021 – 2023", title: "Master's in bioinformatics", body: "M.Sc. at the University of Toronto, with a thesis on machine learning approaches to variant pathogenicity prediction using sequence and structural features. Learned to treat a statistical model as seriously as a biological hypothesis." },
+  { date: "2022 – present", title: "Pipelines, software, and the people using them", body: "Analyst and research software developer work across biomarker studies, cancer genomics, and open-source comparative genomics tooling. Increasingly, the work is as much about process and collaboration as about code." },
+];
+const brings = [
+  "Design and maintain production bioinformatics pipelines from raw reads to analysis-ready outputs.",
+  "Write tested, versioned, reproducible code — not notebooks that only run on one machine.",
+  "Build Python services that expose research datasets and results to collaborators.",
+  "Apply machine learning where a fixed rule fails — and validate against held-out clinical sets.",
+  "Translate between wet-lab scientists, clinical stakeholders, and software engineering.",
+];
+---
+<BaseLayout title={\`About — \${site.name} · \${site.title}\`} description="Why I do this work: reproducible software for biology, at the seam between genome alignment, Python services, and wet-lab conversations.">
+  <section class="section">
+    <div class="container-prose">
+      <p class="eyebrow">About</p><h1 class="mt-3">About</h1>
+      <p class="mt-8 text-xl leading-relaxed text-ink-soft">I do this work because the gap between a biological question and a trustworthy answer is usually a software problem. A researcher with a real question shouldn't have to trust a script that only runs on one laptop; a clinical team shouldn't have to guess which sample produced which figure. Most of what I build is the bridge — reproducible pipelines, documented APIs, software that other people can run, extend, and trust.</p>
+    </div>
+  </section>
+  <section class="section border-t border-rule">
+    <div class="container-prose">
+      <p class="eyebrow mb-8">The arc</p>
+      <div class="space-y-10">
+        {arc.map((step) => (
+          <div class="grid md:grid-cols-[140px_1fr] gap-4 md:gap-8">
+            <p class="font-mono text-[0.72rem] uppercase tracking-[0.14em] text-accent md:pt-1">{step.date}</p>
+            <div><h2 class="!text-2xl mb-2">{step.title}</h2><p class="text-ink-soft leading-relaxed">{step.body}</p></div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+  <section class="section border-t border-rule">
+    <div class="container-prose">
+      <p class="eyebrow mb-6">What I bring</p>
+      <ul class="space-y-3">
+        {brings.map((b) => (<li class="flex gap-3 text-ink-soft"><span class="font-mono text-accent">—</span><span>{b}</span></li>))}
+      </ul>
+    </div>
+  </section>
+  <section class="section border-t border-rule">
+    <div class="container-prose">
+      <p class="text-lg leading-relaxed">Based in Toronto, fully set up for remote work across Canadian and US time zones. Legally authorised to work in Canada. Available for full-time roles, contract engagements, and project-based bioinformatics or scientific software work.</p>
+      <a href="/resume" class="btn btn-secondary mt-8">Download Resume ↓</a>
+    </div>
+  </section>
+  <CtaBand heading="Working on a research problem that needs software?" />
+</BaseLayout>`,
+  "src/pages/contact.astro": `---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { site } from "@/data/site";
+---
+<BaseLayout title={\`Contact — \${site.name} · \${site.title}\`} description="Get in touch about bioinformatics, scientific software, or research data engineering work. Replies within one business day.">
+  <section class="section">
+    <div class="container-content grid gap-12 lg:grid-cols-[1fr_1fr]">
+      <div>
+        <p class="eyebrow">Contact</p><h1 class="mt-3">Contact</h1>
+        <p class="mt-5 text-ink-soft leading-relaxed max-w-md">Best way to reach me is email. I read everything and reply within one business day.</p>
+        <div class="mt-10">
+          <p class="eyebrow mb-2">Email</p>
+          <a href={\`mailto:\${site.email}\`} class="font-serif text-2xl md:text-3xl font-semibold tracking-tight hover:text-accent transition-colors break-all">{site.email}</a>
+        </div>
+        <div class="mt-10 grid grid-cols-1 sm:grid-cols-2 gap-8">
+          <div><p class="eyebrow mb-2">Location</p><p class="text-ink-soft">{site.location}</p><p class="text-ink-soft text-sm mt-1">{site.workMode}</p></div>
+          <div>
+            <p class="eyebrow mb-2">Elsewhere</p>
+            {site.linkedin ? <a href={site.linkedin} class="block text-ink-soft hover:text-accent transition-colors" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a> : <p class="text-ink-soft text-sm">LinkedIn — <em>none provided</em></p>}
+            {site.github ? <a href={site.github} class="block text-ink-soft hover:text-accent transition-colors mt-1" target="_blank" rel="noopener noreferrer">GitHub ↗</a> : <p class="text-ink-soft text-sm mt-1">GitHub — <em>none provided</em></p>}
+          </div>
+        </div>
+      </div>
+      <div class="card p-6 md:p-8 !bg-white">
+        <h2 class="!text-xl mb-6">Send a message</h2>
+        <form name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" class="space-y-4">
+          <input type="hidden" name="form-name" value="contact" />
+          <p class="hidden"><label>Don’t fill this out: <input name="bot-field" /></label></p>
+          <div><label for="name" class="block text-sm mb-1">Name</label><input id="name" name="name" type="text" required autocomplete="name" class="w-full px-3 py-2 border border-rule rounded-sm bg-bg focus:bg-white focus:border-accent outline-none transition-colors" /></div>
+          <div><label for="email" class="block text-sm mb-1">Email</label><input id="email" name="email" type="email" required autocomplete="email" class="w-full px-3 py-2 border border-rule rounded-sm bg-bg focus:bg-white focus:border-accent outline-none transition-colors" /></div>
+          <div><label for="subject" class="block text-sm mb-1">Subject <span class="text-ink-soft">(optional)</span></label><input id="subject" name="subject" type="text" class="w-full px-3 py-2 border border-rule rounded-sm bg-bg focus:bg-white focus:border-accent outline-none transition-colors" /></div>
+          <div><label for="message" class="block text-sm mb-1">Message</label><textarea id="message" name="message" rows="6" required class="w-full px-3 py-2 border border-rule rounded-sm bg-bg focus:bg-white focus:border-accent outline-none transition-colors resize-y"></textarea></div>
+          <button type="submit" class="btn btn-primary w-full justify-center">Send message →</button>
+          <p class="text-xs text-ink-soft text-center">Handled by Netlify Forms. No spam, no tracking.</p>
+        </form>
+      </div>
+    </div>
+  </section>
+</BaseLayout>`,
+  "src/pages/resume.astro": `---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { site } from "@/data/site";
+---
+<BaseLayout title={\`Resume — \${site.name} · \${site.title}\`} description="Resume of Somtochukwu David Ogbonna — computational biologist and software engineer based in Toronto. Download PDF or read online.">
+  <section class="section">
+    <div class="container-content">
+      <div class="flex flex-wrap items-end justify-between gap-6">
+        <div><p class="eyebrow">Resume</p><h1 class="mt-3">Resume</h1></div>
+        <div class="flex flex-wrap gap-3">
+          <a href="/resume.pdf" download class="btn btn-primary">Download PDF ↓</a>
+          <a href="/resume.pdf" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">Open in new tab ↗</a>
+        </div>
+      </div>
+      <div class="mt-10 border border-rule rounded-md overflow-hidden bg-white">
+        <object data="/resume.pdf" type="application/pdf" class="w-full" style="height: 80vh; min-height: 600px;" aria-label="Embedded resume PDF">
+          <div class="p-8 text-center text-ink-soft"><p class="mb-4">The PDF viewer isn’t available in your browser. The HTML version is below and contains the same information.</p><a href="/resume.pdf" download class="btn btn-primary">Download PDF ↓</a></div>
+        </object>
+      </div>
+    </div>
+  </section>
+  <section class="section border-t border-rule">
+    <div class="container-prose prose-case">
+      <p class="eyebrow mb-2">HTML Version</p><h2 class="!text-3xl mb-1">{site.name}</h2>
+      <p class="text-ink-soft">{site.title} · {site.location}</p>
+      <p class="text-ink-soft text-sm mt-1">{site.email} · {site.workMode}</p>
+      <h3 class="!text-xl mt-10 mb-3">Summary</h3><p>{site.summary}</p>
+      <h3 class="!text-xl mt-10 mb-3">Experience</h3>
+      {site.experience.map((e) => (<div class="mb-5"><p class="font-semibold">{e.role}</p><p class="text-ink-soft text-sm">{e.org} · {e.location} · {e.dates}</p></div>))}
+      <h3 class="!text-xl mt-10 mb-3">Education</h3>
+      {site.education.map((e) => (<div class="mb-5"><p class="font-semibold">{e.degree}</p><p class="text-ink-soft text-sm">{e.institution} · {e.dates}</p><p class="text-sm mt-1">{e.detail}</p></div>))}
+      <h3 class="!text-xl mt-10 mb-3">Technical Skills</h3>
+      {site.skills.map((g) => (<p class="mb-2"><strong>{g.category}:</strong> {g.items.join(" · ")}</p>))}
+      <h3 class="!text-xl mt-10 mb-3">Languages</h3>
+      {site.languages.map((l) => (<p class="mb-1"><strong>{l.name}</strong> — {l.level}</p>))}
+      <h3 class="!text-xl mt-10 mb-3">Publications & Talks</h3>
+      <ul>{site.publications.map((p) => <li class="text-sm mb-2">{p}</li>)}</ul>
+    </div>
+  </section>
+</BaseLayout>`
+};
+
+console.log("Building folder structure...");
+
+for (const [filePath, content] of Object.entries(files)) {
+  const dir = path.dirname(filePath);
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+  fs.writeFileSync(filePath, content.trim());
+  console.log(`✓ Created ${filePath}`);
+}
+
+console.log("\n🎉 Success! All files have been generated.");
+console.log("Next steps:");
+console.log("1. Run: npm install");
+console.log("2. Run: npm run dev");
+console.log("3. Open http://localhost:4321 in your browser.");

@@ -1,0 +1,53 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import CtaBand from "@/components/CtaBand.astro";
+import { site } from "@/data/site";
+const arc = [
+  { date: "2017 – 2021", title: "Computer science, with a biology minor", body: "B.Sc. (Hons) at York University. Data structures and algorithms alongside molecular biology and genetics — the pairing that decided the direction of everything after." },
+  { date: "2021 – 2023", title: "Master's in bioinformatics", body: "M.Sc. at the University of Toronto, with a thesis on machine learning approaches to variant pathogenicity prediction using sequence and structural features. Learned to treat a statistical model as seriously as a biological hypothesis." },
+  { date: "2022 – present", title: "Pipelines, software, and the people using them", body: "Analyst and research software developer work across biomarker studies, cancer genomics, and open-source comparative genomics tooling. Increasingly, the work is as much about process and collaboration as about code." },
+];
+const brings = [
+  "Design and maintain production bioinformatics pipelines from raw reads to analysis-ready outputs.",
+  "Write tested, versioned, reproducible code — not notebooks that only run on one machine.",
+  "Build Python services that expose research datasets and results to collaborators.",
+  "Apply machine learning where a fixed rule fails — and validate against held-out clinical sets.",
+  "Translate between wet-lab scientists, clinical stakeholders, and software engineering.",
+];
+---
+<BaseLayout title={`About — ${site.name} · ${site.title}`} description="Why I do this work: reproducible software for biology, at the seam between genome alignment, Python services, and wet-lab conversations.">
+  <section class="section">
+    <div class="container-prose">
+      <p class="eyebrow">About</p><h1 class="mt-3">About</h1>
+      <p class="mt-8 text-xl leading-relaxed text-ink-soft">I do this work because the gap between a biological question and a trustworthy answer is usually a software problem. A researcher with a real question shouldn't have to trust a script that only runs on one laptop; a clinical team shouldn't have to guess which sample produced which figure. Most of what I build is the bridge — reproducible pipelines, documented APIs, software that other people can run, extend, and trust.</p>
+    </div>
+  </section>
+  <section class="section border-t border-rule">
+    <div class="container-prose">
+      <p class="eyebrow mb-8">The arc</p>
+      <div class="space-y-10">
+        {arc.map((step) => (
+          <div class="grid md:grid-cols-[140px_1fr] gap-4 md:gap-8">
+            <p class="font-mono text-[0.72rem] uppercase tracking-[0.14em] text-accent md:pt-1">{step.date}</p>
+            <div><h2 class="!text-2xl mb-2">{step.title}</h2><p class="text-ink-soft leading-relaxed">{step.body}</p></div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+  <section class="section border-t border-rule">
+    <div class="container-prose">
+      <p class="eyebrow mb-6">What I bring</p>
+      <ul class="space-y-3">
+        {brings.map((b) => (<li class="flex gap-3 text-ink-soft"><span class="font-mono text-accent">—</span><span>{b}</span></li>))}
+      </ul>
+    </div>
+  </section>
+  <section class="section border-t border-rule">
+    <div class="container-prose">
+      <p class="text-lg leading-relaxed">Based in Toronto, fully set up for remote work across Canadian and US time zones. Legally authorised to work in Canada. Available for full-time roles, contract engagements, and project-based bioinformatics or scientific software work.</p>
+      <a href="/resume" class="btn btn-secondary mt-8">Download Resume ↓</a>
+    </div>
+  </section>
+  <CtaBand heading="Working on a research problem that needs software?" />
+</BaseLayout>

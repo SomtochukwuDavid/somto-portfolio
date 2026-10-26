@@ -1,0 +1,23 @@
+---
+export interface Props { slug: string; title: string; category: string; problem: string; result: string; stack: string[]; flagship?: boolean; }
+const { slug, title, category, problem, result, stack, flagship = false } = Astro.props;
+---
+<a href={`/work/${slug}`} class:list={["card block p-6 md:p-8 group", flagship && "md:p-10"]}>
+  <div class="flex items-start justify-between gap-4 flex-wrap">
+    <p class="eyebrow">{category}</p>
+    {flagship && <span class="tag !border-accent !text-accent">Flagship</span>}
+  </div>
+  <h3 class:list={["mt-4 font-serif font-semibold tracking-tight", flagship ? "text-3xl md:text-4xl" : "text-2xl"]}>{title}</h3>
+  <div class:list={["mt-4 grid gap-4", flagship ? "md:grid-cols-2" : ""]}>
+    <div>
+      <p class="font-mono text-[0.65rem] uppercase tracking-[0.14em] text-ink-soft mb-1">Problem</p>
+      <p class="text-ink-soft text-sm leading-relaxed">{problem}</p>
+    </div>
+    <div>
+      <p class="font-mono text-[0.65rem] uppercase tracking-[0.14em] text-ink-soft mb-1">Result</p>
+      <p class:list={["leading-relaxed", flagship ? "text-base text-ink" : "text-sm text-ink-soft"]}>{result}</p>
+    </div>
+  </div>
+  <div class="mt-5 flex flex-wrap gap-2">{stack.map((t) => <span class="tag">{t}</span>)}</div>
+  <p class="mt-6 font-mono text-[0.72rem] uppercase tracking-[0.14em] text-accent group-hover:underline">Read case study →</p>
+</a>

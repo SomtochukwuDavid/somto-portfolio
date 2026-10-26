@@ -1,0 +1,20 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import CaseCard from "@/components/CaseCard.astro";
+import CtaBand from "@/components/CtaBand.astro";
+import { site } from "@/data/site";
+const [flagship, ...rest] = site.projects;
+---
+<BaseLayout title={`Selected Work — ${site.name} · ${site.title}`} description="Three case studies in bioinformatics pipeline engineering, multi-site biomarker analysis, and open-source scientific software.">
+  <section class="section">
+    <div class="container-content">
+      <p class="eyebrow">Work</p><h1 class="mt-3">Selected Work</h1>
+      <p class="mt-5 max-w-2xl text-ink-soft leading-relaxed">A small set of projects that show how I move from a wet-lab problem through a pipeline, a piece of software, and a result that collaborators can trust and reuse.</p>
+      <div class="mt-12 grid gap-6">
+        <CaseCard slug={flagship.slug} title={flagship.title} category={flagship.category} problem={flagship.problem} result={flagship.result} stack={flagship.stack} flagship />
+        {rest.map((p) => <CaseCard slug={p.slug} title={p.title} category={p.category} problem={p.problem} result={p.result} stack={p.stack} />)}
+      </div>
+    </div>
+  </section>
+  <CtaBand heading="Have a similar problem in mind?" />
+</BaseLayout>

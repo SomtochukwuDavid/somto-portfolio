@@ -1,0 +1,73 @@
+---
+import "@/styles/global.css";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import { site } from "@/data/site";
+
+export interface Props {
+  title: string;
+  description: string;
+  canonical?: string;
+  ogType?: "website" | "article" | "profile";
+  noindex?: boolean;
+}
+
+const { title, description, canonical, ogType = "website", noindex = false } = Astro.props;
+const siteUrl = Astro.site?.toString().replace(/\/$/, "") ?? "https://somtoogbonna.com";
+const canonicalUrl = canonical ?? new URL(Astro.url.pathname, siteUrl).toString();
+
+const personSchema = {
+  "@context": "https://schema.org", "@type": "Person", name: site.name, jobTitle: site.title,
+  email: `mailto:${site.email}`,
+  address: { "@type": "PostalAddress", addressLocality: "Toronto", addressRegion: "Ontario", addressCountry: "CA" },
+  alumniOf: [{ "@type": "CollegeOrUniversity", name: "University of Toronto" }, { "@type": "CollegeOrUniversity", name: "York University" }],
+  sameAs: [site.github].filter(Boolean),
+  knowsAbout: ["Bioinformatics", "Computational Biology", "Machine Learning", "Software Engineering", "Genomics"],
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="theme-color" content="#FAFAF7" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    <meta property="og:type" content={ogType} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:image" content={`${siteUrl}/og-image.png`} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={`${siteUrl}/og-image.png`} />
+    {Astro.url.pathname === "/" && (
+      <script type="application/ld+json" set:html={JSON.stringify(personSchema)} />
+    )}
+  </head>
+  <body class="bg-bg text-ink antialiased">
+    <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:bg-ink focus:text-bg focus:px-4 focus:py-2 focus:rounded">Skip to content</a>
+    <Header />
+    <main id="main" class="min-h-[60vh]"><slot /></main>
+    <Footer />
+    <script is:inline>
+      const btn = document.getElementById("menu-toggle");
+      const menu = document.getElementById("mobile-menu");
+      if (btn && menu) {
+        btn.addEventListener("click", () => {
+          const open = btn.getAttribute("aria-expanded") === "true";
+          btn.setAttribute("aria-expanded", String(!open));
+          menu.classList.toggle("hidden", open);
+        });
+      }
+    </script>
+  </body>
+</html>

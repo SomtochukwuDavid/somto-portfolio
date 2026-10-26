@@ -1,0 +1,40 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Hero from "@/components/Hero.astro";
+import Metric from "@/components/Metric.astro";
+import CaseCard from "@/components/CaseCard.astro";
+import SkillGroup from "@/components/SkillGroup.astro";
+import CtaBand from "@/components/CtaBand.astro";
+import { site } from "@/data/site";
+const featured = site.projects.slice(0, 3);
+---
+<BaseLayout title={`${site.name} — ${site.title}`} description="Computational biologist and software engineer in Toronto. I build reproducible pipelines that turn sequencing and laboratory data into analysis-ready datasets, and I write the software that runs them." ogType="profile">
+  <Hero />
+  <section class="border-y border-rule bg-white">
+    <div class="container-content py-12">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-6">{site.metrics.map((m) => <Metric value={m.value} label={m.label} />)}</div>
+    </div>
+  </section>
+  <section class="section">
+    <div class="container-prose text-center"><p class="pullquote">“{site.positioning}”</p></div>
+  </section>
+  <section class="section border-t border-rule">
+    <div class="container-content">
+      <div class="flex items-end justify-between flex-wrap gap-4 mb-10">
+        <div><p class="eyebrow">Featured Work</p><h2 class="mt-2">Three case studies</h2></div>
+        <a href="/work" class="font-mono text-[0.72rem] uppercase tracking-[0.14em] text-accent hover:underline">View all work →</a>
+      </div>
+      <div class="grid gap-5">{featured.map((p) => <CaseCard slug={p.slug} title={p.title} category={p.category} problem={p.problem} result={p.result} stack={p.stack} flagship={p.flagship} />)}</div>
+    </div>
+  </section>
+  <section class="section border-t border-rule">
+    <div class="container-content">
+      <p class="eyebrow">Skills</p><h2 class="mt-2 mb-10">What I work with</h2>
+      <div class="grid gap-10 md:grid-cols-3">{site.skills.map((g) => <SkillGroup category={g.category} items={g.items} />)}</div>
+    </div>
+  </section>
+  <section class="section border-t border-rule">
+    <div class="container-prose text-center"><p class="eyebrow mb-3">Recommendations</p><p class="text-ink-soft">Recommendations available on request.</p></div>
+  </section>
+  <CtaBand heading="Have a research problem that needs reproducible software?" />
+</BaseLayout>

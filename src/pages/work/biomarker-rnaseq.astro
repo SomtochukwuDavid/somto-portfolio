@@ -1,0 +1,47 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Tag from "@/components/Tag.astro";
+import { site } from "@/data/site";
+const p = site.projects[1]; const next = site.projects[2];
+---
+<BaseLayout title={`${p.title} — Case Study · ${site.name}`} description="Multi-site RNA-seq biomarker workflow in R and Python: reproducible quantification, differential expression, and parameterised reports replacing manual slide decks." ogType="article">
+  <article class="section">
+    <div class="container-content">
+      <p class="font-mono text-[0.72rem] uppercase tracking-[0.14em] text-ink-soft"><a href="/work" class="hover:text-accent">Work</a><span class="mx-2 opacity-60">/</span><span>Biomarker RNA-seq</span></p>
+      <p class="eyebrow mt-8">{p.category}</p><h1 class="mt-3 max-w-3xl">{p.title}</h1>
+      <p class="mt-6 max-w-2xl text-xl text-ink-soft leading-relaxed">A multi-site biomarker study needed reproducible RNA-seq quantification, differential expression, and weekly reporting — previously stitched together by hand. Built a workflow in R and Python with parameterised reports, improving traceability from raw sample to published figure.</p>
+      <div class="mt-8 grid grid-cols-2 md:grid-cols-4 gap-6 py-6 border-y border-rule">
+        <div><p class="font-mono text-[0.65rem] uppercase tracking-[0.14em] text-ink-soft">Role</p><p class="mt-1 text-sm">{p.role}</p></div>
+        <div><p class="font-mono text-[0.65rem] uppercase tracking-[0.14em] text-ink-soft">Duration</p><p class="mt-1 text-sm">{p.duration}</p></div>
+        <div><p class="font-mono text-[0.65rem] uppercase tracking-[0.14em] text-ink-soft">Team</p><p class="mt-1 text-sm">{p.team}</p></div>
+        <div><p class="font-mono text-[0.65rem] uppercase tracking-[0.14em] text-ink-soft">Stack</p><p class="mt-1 text-sm">{p.stack.join(" · ")}</p></div>
+      </div>
+    </div>
+  </article>
+  <article class="container-prose pb-16 prose-case">
+    <h2 class="text-2xl mb-4">The problem</h2><p>A multi-site biomarker study was processing RNA-seq data across sites and assembling weekly findings into slide decks by hand. Quantification and differential expression lacked a single maintained workflow, and tracing a published figure back to a raw sample was time-consuming.</p>
+    <h2 class="text-2xl mb-4 mt-10">My role</h2><p>Bioinformatics analyst within the study team — built the quantification and differential expression workflow, the reporting templates, the single-cell clustering workflow, and the study database schema.</p>
+    <h2 class="text-2xl mb-4 mt-10">The approach</h2>
+    <ul>
+      <li>Built the <strong>RNA-seq quantification and differential expression workflow</strong> in R and Python across sites.</li>
+      <li>Developed <strong>reproducible R Markdown reporting templates</strong> that replaced manually assembled slide decks, cutting weekly reporting effort substantially.</li>
+      <li>Built a <strong>single-cell analysis workflow</strong> for clustering and cell-type annotation across several thousand cells, including batch correction and marker validation.</li>
+      <li>Designed the <strong>study database schema and data dictionary</strong>, improving traceability from raw sample to published figure.</li>
+      <li>Presented results to clinical and non-technical stakeholders, translating statistical output into plain-language findings.</li>
+    </ul>
+    <h2 class="text-2xl mb-4 mt-10">The result</h2>
+    <ul>
+      <li><strong>Weekly reporting effort substantially reduced</strong> by replacing manual slide assembly with parameterised reports.</li>
+      <li><strong>Several thousand cells</strong> processed through a single-cell clustering and annotation workflow with batch correction.</li>
+      <li><strong>Full traceability</strong> from raw sample to published figure via the new schema and data dictionary.</li>
+      <li><strong>Consistent reporting</strong> across sites, replacing site-local slide-deck practices.</li>
+    </ul>
+    <h2 class="text-2xl mb-4 mt-10">Tech stack</h2><div class="flex flex-wrap gap-2 mb-4">{p.stack.map((t) => <Tag label={t} />)}</div>
+  </article>
+  <nav class="border-t border-rule">
+    <div class="container-content py-8 flex flex-wrap items-center justify-between gap-4">
+      <a href="/work" class="font-mono text-[0.72rem] uppercase tracking-[0.14em] text-ink-soft hover:text-accent">← Back to Work</a>
+      <a href={`/work/${next.slug}`} class="text-right group"><p class="font-mono text-[0.65rem] uppercase tracking-[0.14em] text-ink-soft">Next case study</p><p class="font-serif text-lg mt-1 group-hover:text-accent transition-colors">{next.title} →</p></a>
+    </div>
+  </nav>
+</BaseLayout>

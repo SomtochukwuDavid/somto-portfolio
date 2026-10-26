@@ -1,0 +1,64 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Tag from "@/components/Tag.astro";
+import { site } from "@/data/site";
+const p = site.projects[0]; const next = site.projects[1];
+---
+<BaseLayout title={`${p.title} — Case Study · ${site.name}`} description="Rewriting a cancer genomics variant-calling workflow as a containerised Nextflow pipeline with automated quality gates — ~40% faster per-sample runtime and reproducible results across the team." ogType="article">
+  <article class="section">
+    <div class="container-content">
+      <p class="font-mono text-[0.72rem] uppercase tracking-[0.14em] text-ink-soft"><a href="/work" class="hover:text-accent">Work</a><span class="mx-2 opacity-60">/</span><span>Variant-Calling Pipeline</span></p>
+      <p class="eyebrow mt-8">{p.category}</p><h1 class="mt-3 max-w-3xl">{p.title}</h1>
+      <p class="mt-6 max-w-2xl text-xl text-ink-soft leading-relaxed">A cancer genomics research programme processing several hundred whole-exome and RNA-seq samples per year moved from ad-hoc scripts to a containerised, quality-gated Nextflow pipeline — cutting per-sample runtime by ~40% and eliminating a recurring class of manual reruns.</p>
+      <div class="mt-8 grid grid-cols-2 md:grid-cols-4 gap-6 py-6 border-y border-rule">
+        <div><p class="font-mono text-[0.65rem] uppercase tracking-[0.14em] text-ink-soft">Role</p><p class="mt-1 text-sm">{p.role}</p></div>
+        <div><p class="font-mono text-[0.65rem] uppercase tracking-[0.14em] text-ink-soft">Duration</p><p class="mt-1 text-sm">{p.duration}</p></div>
+        <div><p class="font-mono text-[0.65rem] uppercase tracking-[0.14em] text-ink-soft">Team</p><p class="mt-1 text-sm">{p.team}</p></div>
+        <div><p class="font-mono text-[0.65rem] uppercase tracking-[0.14em] text-ink-soft">Stack</p><p class="mt-1 text-sm">{p.stack.join(" · ")}</p></div>
+      </div>
+    </div>
+  </article>
+  <article class="container-prose pb-16 prose-case">
+    <h2 class="text-2xl mb-4 mt-4">The problem</h2><p>A cancer genomics research programme was handling several hundred whole-exome and RNA-seq samples per year from raw reads to annotated variant calls. The analysis lived across ad-hoc scripts that individual researchers ran locally, so per-sample runtime was inconsistent, a recurring class of failures required manual reruns, and two team members running the same sample could end up with subtly different outputs.</p>
+    <h2 class="text-2xl mb-4 mt-10">My role</h2><p>Solo engineer on the pipeline and its supporting software — design, implementation, the ML variant classifier, and the process changes needed to make the new workflow stick across the team. Worked directly with wet-lab and clinical collaborators to keep analysis aligned with experimental design.</p>
+    <h2 class="text-2xl mb-4 mt-10">The approach</h2>
+    <ul>
+      <li>Rewrote the variant-calling workflow as a <strong>containerised Nextflow pipeline</strong> so runs are reproducible on any machine with Docker.</li>
+      <li>Added <strong>automated quality gates</strong> at each stage to catch failures before they propagate to downstream analysis, removing a recurring class of manual reruns.</li>
+      <li>Built a <strong>Python service</strong> exposing the lab's reference datasets and analysis results through a documented API — now used by three collaborating research groups.</li>
+      <li>Developed a <strong>scikit-learn classifier</strong> for likely-pathogenic vs. benign variants, combining sequence features, population frequency, and predicted structural impact, validated against a held-out clinical set.</li>
+      <li>Introduced <strong>version control, automated tests, and reproducible environment management</strong> where ad-hoc scripts previously lived, reducing cross-team discrepancies to near zero.</li>
+      <li>Held <strong>regular working sessions with wet-lab and clinical collaborators</strong> to keep analysis aligned with experimental design.</li>
+    </ul>
+    <h2 class="text-2xl mb-4 mt-10">The result</h2>
+    <ul>
+      <li><strong>~40% faster</strong> per-sample runtime after containerisation and pipeline restructuring.</li>
+      <li><strong>Hundreds</strong> of whole-exome and RNA-seq samples now processed per year on a single maintained workflow.</li>
+      <li><strong>3 collaborating research groups</strong> using the reference-dataset API in production.</li>
+      <li><strong>Near-zero</strong> analysis discrepancies between team members after reproducibility adoption.</li>
+      <li><strong>Recurring manual reruns</strong> eliminated via automated quality gates.</li>
+    </ul>
+    <h2 class="text-2xl mb-4 mt-10">Tech stack</h2><div class="flex flex-wrap gap-2 mb-4">{p.stack.map((t) => <Tag label={t} />)}</div>
+    <h2 class="text-2xl mb-4 mt-10">Example (illustrative)</h2>
+    <p class="text-sm text-ink-soft italic">Illustrative pipeline structure — not lifted from a real repository. Shows the containerised Nextflow pattern used in production.</p>
+    <pre class="mt-4 p-5 rounded-md bg-[#14181F] text-bg text-[0.8rem] leading-relaxed overflow-x-auto font-mono"><span class="text-[#B8935A]">// nextflow.config — a containerised variant-calling pipeline</span>
+process {
+  container = <span class="text-[#9DC9A5]">'quay.io/biocontainers/gatk4:4.4.0--py39h5371cbf_0'</span>
+  cpus      = 4
+  memory    = <span class="text-[#9DC9A5]">'16 GB'</span>
+}
+workflow {
+  reads    = Channel.fromFilePairs(<span class="text-[#9DC9A5]">'samples/*_{1,2}.fq.gz'</span>)
+  aligned  = bwa_mem(reads, ref) | mark_duplicates
+  called   = haplotypecaller(aligned, ref) | filter_variants
+  scored   = pathogenicity_classifier(called)
+  scored.view { v -> <span class="text-[#9DC9A5]">"${v.sample}: ${v.classification}"</span> }
+}</pre>
+  </article>
+  <nav class="border-t border-rule">
+    <div class="container-content py-8 flex flex-wrap items-center justify-between gap-4">
+      <a href="/work" class="font-mono text-[0.72rem] uppercase tracking-[0.14em] text-ink-soft hover:text-accent">← Back to Work</a>
+      <a href={`/work/${next.slug}`} class="text-right group"><p class="font-mono text-[0.65rem] uppercase tracking-[0.14em] text-ink-soft">Next case study</p><p class="font-serif text-lg mt-1 group-hover:text-accent transition-colors">{next.title} →</p></a>
+    </div>
+  </nav>
+</BaseLayout>
