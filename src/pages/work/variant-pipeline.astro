@@ -41,19 +41,21 @@ const p = site.projects[0]; const next = site.projects[1];
     <h2 class="text-2xl mb-4 mt-10">Tech stack</h2><div class="flex flex-wrap gap-2 mb-4">{p.stack.map((t) => <Tag label={t} />)}</div>
     <h2 class="text-2xl mb-4 mt-10">Example (illustrative)</h2>
     <p class="text-sm text-ink-soft italic">Illustrative pipeline structure — not lifted from a real repository. Shows the containerised Nextflow pattern used in production.</p>
-    <pre class="mt-4 p-5 rounded-md bg-[#14181F] text-bg text-[0.8rem] leading-relaxed overflow-x-auto font-mono">{`// nextflow.config — a containerised variant-calling pipeline
-process {
+      <pre class="mt-4 p-5 rounded-md bg-[#14181F] text-bg text-[0.8rem] leading-relaxed overflow-x-auto font-mono">
+// nextflow.config — a containerised variant-calling pipeline
+process &#123;
   container = 'quay.io/biocontainers/gatk4:4.4.0--py39h5371cbf_0'
   cpus      = 4
   memory    = '16 GB'
-}
-workflow {
-  reads    = Channel.fromFilePairs('samples/*_{1,2}.fq.gz')
+&#125;
+workflow &#123;
+  reads    = Channel.fromFilePairs('samples/*_&#123;1,2&#125;.fq.gz')
   aligned  = bwa_mem(reads, ref) | mark_duplicates
   called   = haplotypecaller(aligned, ref) | filter_variants
   scored   = pathogenicity_classifier(called)
-  scored.view { v -> "${v.sample}: ${v.classification}" }
-}`}</pre>
+  scored.view &#123; v -> "&#123;v.sample&#125;: &#123;v.classification&#125;" &#125;
+&#125;
+    </pre>
   </article>
   <nav class="border-t border-rule">
     <div class="container-content py-8 flex flex-wrap items-center justify-between gap-4">
